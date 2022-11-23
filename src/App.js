@@ -157,8 +157,8 @@ const App = () => {
           <Map
             initialViewState={{
               latitude: 0,
-              longitude: -100,
-              zoom: 3,
+              longitude: 0,
+              zoom: 2,
             }}
             mapStyle="mapbox://styles/mapbox/dark-v11"
             mapboxAccessToken={MAPBOX_TOKEN}
