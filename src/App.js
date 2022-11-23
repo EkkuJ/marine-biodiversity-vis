@@ -158,7 +158,7 @@ const App = () => {
       <div className="h-full px-12 py-4">
         <div className="h-[6%] flex justify-between items-center">
           <h1 className="text-white text-5xl font-bold tracking-wider">
-            Plenty of Fish in the Sea (?)
+            WHERE THEM FISH AT
           </h1>
           <div className="flex items-center">
             <p className="text-slate-400 mr-2">Select species:</p>
