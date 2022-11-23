@@ -73,9 +73,15 @@ const App = () => {
   const [currentTime, setCurrentTime] = useState(START_MS);
   const [animate, setAnimate] = useState(false);
   const [species, setSpecies] = useState('caridea')
+  const [animationSpeed, setAnimationSpeed] = useState(1)
 
   const stepToNextYear = () => {
     const nextDay = currentTime + STEP * 365;
+    setCurrentTime(nextDay);
+  };
+  
+  const stepToPrevYear = () => {
+    const nextDay = currentTime - STEP * 365;
     setCurrentTime(nextDay);
   };
 
@@ -91,9 +97,17 @@ const App = () => {
     setSpecies(val.value)
   }
 
+  const toggleAnimationSpeed = () => {
+    if (animationSpeed === 3) {
+      setAnimationSpeed(1)
+    } else {
+      setAnimationSpeed(animationSpeed + 1)
+    }
+  }
+
   useEffect(() => {
     let currentData = [];
-    for (let i = 0; i < SHOW_X_PREV_STEPS; i++) {
+    for (let i = 0; i < SHOW_X_PREV_STEPS * animationSpeed; i++) {
       const timestamp = currentTime - i * STEP;
       let newData = []
       switch (species) {
@@ -114,12 +128,12 @@ const App = () => {
       const newPointData = occuranciesToFeatures(currentData);
       setPointData(newPointData);
     }
-  }, [currentTime, species]);
+  }, [currentTime, species, animationSpeed]);
 
   useEffect(() => {
     if (animate) {
       const animation = window.requestAnimationFrame(() => {
-        const nextDay = currentTime + STEP;
+        const nextDay = currentTime + animationSpeed * STEP;
         setCurrentTime(nextDay);
       });
       return () => window.cancelAnimationFrame(animation);
@@ -158,17 +172,23 @@ const App = () => {
           </Map>
         </div>
         <div className="flex justify-end">
-          <button className="mx-2 text-white" onClick={stepToNextYear}>
+          <button className="mx-2 text-white underline" onClick={stepToPrevYear}>
+            Previous year
+          </button>
+          <button className="mx-2 mr-8 text-white underline" onClick={stepToNextYear}>
             Next year
           </button>
-          <button className="mx-2 text-white" onClick={resetTime}>
-            Reset Time
-          </button>
-          <button className="mx-2 text-white" onClick={() => setAnimate(true)}>
+          <button className="mx-2 text-white underline" onClick={() => setAnimate(true)}>
             Play animation
           </button>
-          <button className="mx-2 text-white" onClick={() => setAnimate(false)}>
-            Stop animation
+          <button className="mx-2 text-white underline" onClick={() => setAnimate(false)}>
+            Pause animation
+          </button>
+          <button className="mx-2 text-white underline" onClick={resetTime}>
+            Reset Time
+          </button>
+          <button className="mx-2 text-white underline" onClick={toggleAnimationSpeed}>
+            Toggle animation speed ({animationSpeed}x)
           </button>
         </div>
         <div>
