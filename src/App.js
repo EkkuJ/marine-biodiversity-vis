@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Map, Source, Layer } from "react-map-gl";
 import Slider from "rc-slider";
+import Select from 'react-select'
 import "rc-slider/assets/index.css";
-import data from "./shrimp_occ.json";
+import shrimpData from "./shrimp_occ.json";
 
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiZWtrdWpva2luZW4iLCJhIjoiY2s2ODZreXd6MDF1eTNpbjRyOGplOHg0MSJ9.GpDn-H6Y50yffg3XKXNxHg";
@@ -52,6 +53,16 @@ const getYearAndMonth = (ts) => {
   return [date.getFullYear(), monthNames[(date.getMonth())]];
 };
 
+const selectOptions = [
+  { value: 'chocolate', label: 'Chocolate' },
+  { value: 'strawberry', label: 'Strawberry' },
+  { value: 'vanilla', label: 'Vanilla' }
+]
+
+const selectStyles = {
+  control: (styles) => ({...styles, width: '15rem'})
+}
+
 const START_MS = 820627200000;
 const STEP = 86400000;
 const SHOW_X_PREV_STEPS = 100;
@@ -79,7 +90,7 @@ const App = () => {
     let currentData = [];
     for (let i = 0; i < SHOW_X_PREV_STEPS; i++) {
       const timestamp = currentTime - i * STEP;
-      const newData = data[timestamp.toFixed(1)];
+      const newData = shrimpData[timestamp.toFixed(1)];
       if (newData) {
         currentData = currentData.concat(newData);
       }
@@ -102,11 +113,16 @@ const App = () => {
 
   return (
     <div className="w-screen h-screen bg-black">
-      <div className="h-full p-12">
-        <div className="h-[6%]">
-          <h1 className="text-white text-5xl font-bold tracking-widest">
-            WHERE THEM FISH AT
+      <div className="h-full px-12 py-4">
+        <div className="h-[6%] flex justify-between items-center">
+          <h1 className="text-white text-5xl font-bold tracking-wider">
+            Plenty of Fish in the Sea (?)
           </h1>
+          <div className="flex items-center">
+            <p className="text-slate-400 mr-2">Select species:</p>
+            <Select options={selectOptions} styles={selectStyles} defaultValue={selectOptions[0]} />
+
+          </div>
         </div>
         <div className="h-[86%]">
           <Map
