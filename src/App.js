@@ -3,7 +3,8 @@ import { Map, Source, Layer } from "react-map-gl";
 import Slider from "rc-slider";
 import Select from 'react-select'
 import "rc-slider/assets/index.css";
-import shrimpData from "./shrimp_occ.json";
+import carideaData from "./shrimp_occ.json";
+import whaleSharkData from "./whale_shark_occ.json"
 
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiZWtrdWpva2luZW4iLCJhIjoiY2s2ODZreXd6MDF1eTNpbjRyOGplOHg0MSJ9.GpDn-H6Y50yffg3XKXNxHg";
@@ -54,13 +55,12 @@ const getYearAndMonth = (ts) => {
 };
 
 const selectOptions = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry' },
-  { value: 'vanilla', label: 'Vanilla' }
+  { value: 'caridea', label: 'Shrimp (Caridea, AphiaID 106674)' },
+  { value: 'whaleShark', label: 'Whale Shark (AphiaID 105706)' },
 ]
 
 const selectStyles = {
-  control: (styles) => ({...styles, width: '15rem'})
+  control: (styles) => ({...styles, width: '20rem'})
 }
 
 const START_MS = 820627200000;
@@ -72,6 +72,7 @@ const App = () => {
   const [pointData, setPointData] = useState(null);
   const [currentTime, setCurrentTime] = useState(START_MS);
   const [animate, setAnimate] = useState(false);
+  const [species, setSpecies] = useState('caridea')
 
   const stepToNextYear = () => {
     const nextDay = currentTime + STEP * 365;
@@ -86,11 +87,25 @@ const App = () => {
     setCurrentTime(val);
   };
 
+  const selectOnChange = (val) => {
+    setSpecies(val.value)
+  }
+
   useEffect(() => {
     let currentData = [];
     for (let i = 0; i < SHOW_X_PREV_STEPS; i++) {
       const timestamp = currentTime - i * STEP;
-      const newData = shrimpData[timestamp.toFixed(1)];
+      let newData = []
+      switch (species) {
+        case 'caridea':
+          newData = carideaData[timestamp.toFixed(1)];
+          break
+        case 'whaleShark':
+          newData = whaleSharkData[timestamp.toFixed(1)];
+          break
+        default:
+          newData = carideaData[timestamp.toFixed(1)];
+      }
       if (newData) {
         currentData = currentData.concat(newData);
       }
@@ -99,7 +114,7 @@ const App = () => {
       const newPointData = occuranciesToFeatures(currentData);
       setPointData(newPointData);
     }
-  }, [currentTime]);
+  }, [currentTime, species]);
 
   useEffect(() => {
     if (animate) {
@@ -120,7 +135,7 @@ const App = () => {
           </h1>
           <div className="flex items-center">
             <p className="text-slate-400 mr-2">Select species:</p>
-            <Select options={selectOptions} styles={selectStyles} defaultValue={selectOptions[0]} />
+            <Select options={selectOptions} styles={selectStyles} defaultValue={selectOptions[0]} onChange={selectOnChange}/>
 
           </div>
         </div>
